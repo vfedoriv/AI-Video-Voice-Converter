@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "ai-video-voice-converter"
+version = "0.1.0"
+description = "Allow to change voice in video files (get rid of accent etc...)"
+authors = ["Your Name <you@example.com>"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+moviepy = "^1.0.3"
+openai-whisper = "^1.0.0"
+coqui-tts = "^1.0.0"
+pydub = "^0.25.1"
+noisereduce = "^2.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
