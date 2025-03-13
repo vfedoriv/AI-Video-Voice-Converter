@@ -7,5 +7,5 @@ def stt_whisper(audio_file):
         result = model.transcribe(audio_file)
         return result["text"]
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred in stt_whisper: {e}")
         return None
