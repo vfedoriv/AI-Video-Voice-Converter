@@ -24,11 +24,15 @@ def main(video_file, output_video_file):
 
         # Step 4: Convert the extracted audio to text using STT
         # text = stt_whisper(preprocessed_audio_file)
-        text = stt_whisper(audio_file)
+        text, timestamps = stt_whisper(audio_file)
+
+        tts_text_file = "./data/tts_text.txt"
+        with open(tts_text_file, "w") as file:
+            file.write(text)
 
         # Step 5: Convert the text to speech using TTS
         tts_audio_file = "./data/tts_audio.wav"
-        tts_coqui(text, tts_audio_file)
+        tts_coqui(text, timestamps, tts_audio_file)
 
         # Step 6: Synchronize the new audio with the video
         # synchronized_audio_file = "./data/synchronized_audio.wav"
@@ -42,6 +46,6 @@ def main(video_file, output_video_file):
         print(f"An error occurred in main: {e}")
 
 if __name__ == "__main__":
-    video_file = "./data/input_video.mp4"
+    video_file = "./data/input_video2.mp4"
     output_video_file = "./data/output_video.mp4"
     main(video_file, output_video_file)
