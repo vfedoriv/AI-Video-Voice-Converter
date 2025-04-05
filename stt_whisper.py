@@ -1,4 +1,5 @@
 import whisper
+import re
 
 
 def stt_whisper(audio_file):
@@ -21,31 +22,64 @@ def stt_whisper(audio_file):
 def merge_segments_to_sentences(segments):
     """
     Merge Whisper segments to ensure each segment contains a full sentence.
+    Handles cases where a segment contains multiple sentences and adjusts start and end times proportionally.
     """
     merged_segments = []
-    current_segment = None
+    sentence_endings = re.compile(r"(?<=[.!?])\s+")  # Regex to split text into sentences
+    buffer = ""  # Buffer to hold incomplete sentences
+    buffer_start = None  # Start time of the buffered text
 
     for segment in segments:
         text = segment["text"].strip()
         start = segment["start"]
         end = segment["end"]
 
-        # If no current segment, start a new one
-        if current_segment is None:
-            current_segment = {"start": start, "end": end, "text": text}
-        else:
-            # Check if the current segment ends with sentence-ending punctuation
-            if current_segment["text"].strip().endswith((".", "?", "!")):
-                # Finalize the current segment and start a new one
-                merged_segments.append(current_segment)
-                current_segment = {"start": start, "end": end, "text": text}
-            else:
-                # Merge the current segment with the new one
-                current_segment["text"] += " " + text
-                current_segment["end"] = end
+        # Prepend any buffered text to the current segment
+        if buffer:
+            text = buffer + " " + text
+            start = buffer_start
+            buffer = ""
+            buffer_start = None
 
-    # Add the last segment if it exists
-    if current_segment:
-        merged_segments.append(current_segment)
+        # Split the text into sentences
+        sentences = sentence_endings.split(text)
+        total_chars = sum(len(sentence.strip()) for sentence in sentences if sentence.strip())
+
+        # If the last sentence is incomplete, buffer it for the next segment
+        if not text.strip().endswith((".", "?", "!")):
+            buffer = sentences.pop().strip()
+            buffer_start = start + (len(text) - len(buffer)) / len(text) * (end - start)
+
+        # Calculate proportional timing for each sentence
+        sentence_start = start
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+
+            # Calculate the proportional duration for this sentence
+            sentence_chars = len(sentence)
+            sentence_duration = (sentence_chars / total_chars) * (end - start)
+
+            # Set the end time for the current sentence
+            sentence_end = sentence_start + sentence_duration
+
+            # Create a new segment for the sentence
+            merged_segments.append({
+                "start": sentence_start,
+                "end": sentence_end,
+                "text": sentence
+            })
+
+            # Update the start time for the next sentence
+            sentence_start = sentence_end
+
+    # If there's any remaining buffered text, add it as a final segment
+    if buffer:
+        merged_segments.append({
+            "start": buffer_start,
+            "end": segments[-1]["end"],
+            "text": buffer
+        })
 
     return merged_segments

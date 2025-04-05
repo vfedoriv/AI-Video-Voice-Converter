@@ -46,6 +46,6 @@ def main(video_file, output_video_file):
         print(f"An error occurred in main: {e}")
 
 if __name__ == "__main__":
-    video_file = "./data/input_video2.mp4"
+    video_file = "./data/input_video.mp4"
     output_video_file = "./data/output_video.mp4"
     main(video_file, output_video_file)
