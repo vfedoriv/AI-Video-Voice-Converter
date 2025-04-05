@@ -19,7 +19,9 @@ dependencies = [
     "torch (>=2.6.0,<3.0.0)",
     "torchvision (>=0.21.0,<0.22.0)",
     "torchaudio (>=2.6.0,<3.0.0)",
-    "coqpit-config (>=0.2.0,<0.3.0)"
+    "coqpit-config (>=0.2.0,<0.3.0)",
+    "librosa (>=0.11.0,<0.12.0)",
+    "soundfile (>=0.13.1,<0.14.0)"
 ]
 
 [build-system]

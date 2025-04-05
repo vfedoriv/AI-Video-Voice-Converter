@@ -30,7 +30,7 @@ def main(video_file, output_video_file):
         with open(tts_text_file, "w") as file:
             file.write(text)
 
-        # Step 5: Convert the text to speech using TTS
+        # Step 5: Convert the text to speech using TTS 
         tts_audio_file = "./data/tts_audio.wav"
         tts_coqui(text, timestamps, tts_audio_file)
 

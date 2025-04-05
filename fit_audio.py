@@ -21,6 +21,11 @@ def fit_audio_to_duration(audio_file, start_time, end_time):
 
     # Calculate the stretch factor
     original_duration = len(audio)  # Original duration in milliseconds
+    
+    # Check if the audio already fits within the target duration
+    if original_duration <= target_duration:
+        return audio  # No adjustment needed
+
     stretch_factor = original_duration / target_duration
 
     # Adjust the playback speed
